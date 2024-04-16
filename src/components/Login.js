@@ -4,30 +4,51 @@ import { validateFormData } from "../utils/validate";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  updateProfile,
 } from "firebase/auth";
 import { auth } from "../utils/firebase";
 import { useNavigate } from "react-router-dom";
+import { addUser } from "../utils/userSlice";
+import { useDispatch } from "react-redux";
 
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
+  const nameRef = useRef(null);
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleButtonClick = () => {
     const email = emailRef.current.value;
     const password = passwordRef.current.value;
+    // console.log("name", name);
     const message = validateFormData(email, password);
     setErrorMessage(message);
     if (message) return;
 
     if (!isSignInForm) {
+      const name = nameRef.current.value;
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           // Signed up
           const user = userCredential.user;
-          navigate("/browse");
+          updateProfile(user, {
+            displayName: name,
+             photoURL: "https://lh3.googleusercontent.com/-CYBAnwb4I44/AAAAAAAAAAI/AAAAAAAAAAA/ALKGfklxcMrd_i0-PKNFndOn0VnWeXI1MQ/photo.jpg?sz=46"
+          }).then(() => {
+            const { uid, email, displayName, photoURL } = auth.currentUser;
+
+        dispatch(addUser({ uid: uid, email: email, photoURL: photoURL, displayName:displayName }));
+            navigate("/browse");
+            // Profile updated!
+            // ...
+          }).catch((error) => {
+
+            // An error occurred
+            // ...
+          });
           // ...
         })
         .catch((error) => {
@@ -74,9 +95,11 @@ const Login = () => {
         </h1>
         {!isSignInForm && (
           <input
+            ref={nameRef}
             className="w-full p-3 my-2 rounded-md bg-gray-500 bg-opacity-50 border-[0.1px] border-solid border-slate-200"
             type="text"
             placeholder="Name"
+            // onChange={(e) => console.log(e.target.value)}
           />
         )}
         <input
@@ -91,13 +114,13 @@ const Login = () => {
           placeholder="Password"
           ref={passwordRef}
         />
-        {!isSignInForm && (
+        {/* {!isSignInForm && (
           <input
             className="w-full p-3 my-2 rounded-md bg-gray-500 bg-opacity-50 border-[0.1px] border-solid border-slate-200"
             type="Password"
             placeholder="Confirm Password"
           />
-        )}
+        )} */}
         <p className="text-red-500 font-bold">{errorMessage}</p>
         <button
           className="text-center py-2 my-4 bg-red-700 w-full rounded-md"

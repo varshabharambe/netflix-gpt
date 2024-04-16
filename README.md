@@ -83,6 +83,8 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 - create signup user account
 - implemented sign in api
 - created store
+- implemented SignOut
+- Fetch movies from TMDB Api
 
 # features
 - Login/sign up form
