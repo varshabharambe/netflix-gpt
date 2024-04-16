@@ -84,6 +84,9 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 - implemented sign in api
 - created store
 - implemented SignOut
+<!-- - BugFix: sign up user display name and profile picture
+- bugfix: redirections -->
+- unsubscribe onAuthStateChange
 - Fetch movies from TMDB Api
 
 # features
